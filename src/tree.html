@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Tree Structure</title>
+    <style>
+      .node {
+        margin: 5px;
+        padding: 10px;
+        border: 1px solid black;
+      }
+
+      .vertical-container {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+      }
+
+      .horizontal-container {
+        display: flex;
+        flex-direction: row;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="tree-container"></div>
+
+    <script>
+      const nodes = [
+        { id: 1, title: "A" },
+        { id: 2, title: "B", parentId: 1 },
+        { id: 3, title: "C", parentId: 2 },
+        { id: 4, title: "D", parentId: 1 },
+        { id: 5, title: "E", parentId: 4 },
+        { id: 6, title: "F", parentId: 5 },
+        { id: 7, title: "G", parentId: 3 },
+        { id: 8, title: "H", parentId: 3 },
+        { id: 9, title: "I" }, // Another root node
+        { id: 10, title: "J", parentId: 9 },
+      ];
+
+      // Find the root nodes (nodes without a parentId)
+      const rootNodes = nodes.filter((node) => !node.parentId);
+
+      // Function to create a single node element
+      function createNodeElement(title) {
+        const nodeElement = document.createElement("div");
+        nodeElement.className = "node";
+        nodeElement.textContent = title;
+        return nodeElement;
+      }
+
+      // Recursive function to create the tree structure
+      function createTree(node, nodes) {
+        const container = document.createElement("div");
+        container.className = "horizontal-container";
+
+        const nodeElement = createNodeElement(node.title);
+        container.appendChild(nodeElement);
+
+        const children = nodes.filter((n) => n.parentId === node.id);
+
+        if (children.length > 0) {
+          const childrenContainer = document.createElement("div");
+          childrenContainer.className = "vertical-container";
+
+          children.forEach((child) => {
+            const childTree = createTree(child, nodes);
+            childrenContainer.appendChild(childTree);
+          });
+
+          container.appendChild(childrenContainer);
+        }
+
+        return container;
+      }
+
+      // Function to render the tree
+      function renderTree(rootNodes, nodes) {
+        const treeContainer = document.getElementById("tree-container");
+        treeContainer.innerHTML = ""; // Clear any existing content
+
+        rootNodes.forEach((rootNode) => {
+          const tree = createTree(rootNode, nodes);
+          treeContainer.appendChild(tree);
+        });
+      }
+
+      // Render the tree
+      renderTree(rootNodes, nodes);
+    </script>
+  </body>
+</html>
